@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Collection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reuse your existing styles from webseries.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #D3DDE6;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+        
+        body.dimmed {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        header {
+            background-color: #D3DDE6;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: black;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        
+        .favorite-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 22px;
+            color: #000;
+            transition: all 0.3s;
+        }
+        
+        .favorite-button:hover {
+            color: #ff3e3e;
+        }
+        
+        main {
+            margin-top: 80px;
+            padding: 20px;
+        }
+        
+        .music-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .music-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .music-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .music-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .music-info {
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .music-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .music-artist {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .music-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .details-button {
+            padding: 8px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .favorite-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #ccc;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transition: all 0.3s;
+        }
+        
+        .favorite-toggle.favorited {
+            color: #ff3e3e;
+        }
+        
+        /* Modal styles (same as webseries.html) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            max-width: 90%;
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1001;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            background: none;
+            border: none;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .meta-item {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .modal-description {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        .platforms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .platform {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+        
+        .platform-icon {
+            font-size: 18px;
+        }
+        
+        .home-btn {
+            margin-left: 120px;
+            padding: 10px 20px;
+            background-color: #4CAF50; 
+            color: white; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="nav-links">
+                <a href="documentry.html">Documentry</a>
+                <a href="webseries.html">Web_series</a>
+                <a href="top5.html">Top 5</a>
+            </div>
+            <button class="favorite-button" onclick="window.location.href='favourite_list.html'">
+                <i class="fas fa-heart"></i> Favorites
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <a href="finall.html">
+            <button class="home-btn">Home</button>
+        </a>
+
+        <div class="music-container">
+            <h1>Music Collection</h1>
+            
+            <div class="music-grid">
+                <!-- Music Card 1 -->
+                <div class="music-card">
+                    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 101, name: 'Bohemian Rhapsody', type: 'music'})">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="musicimg/1.jpg" alt="Bohemian Rhapsody" class="music-image">
+                    <div class="music-info">
+                        <h3 class="music-title">Bohemian Rhapsody</h3>
+                        <p class="music-artist">Queen</p>
+                        <div class="music-actions">
+                            <button class="details-button" onclick="showMusicDetails({
+                                title: 'Bohemian Rhapsody',
+                                artist: 'Queen',
+                                year: '1975',
+                                album: 'A Night at the Opera',
+                                genre: 'Rock',
+                                duration: '5:55'
+                            })">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- Music Card 2 -->
+                <div class="music-card">
+                    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 102, name: 'Shape of You', type: 'music'})">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="musicimg/2.jpg" alt="Shape of You" class="music-image">
+                    <div class="music-info">
+                        <h3 class="music-title">Shape of You</h3>
+                        <p class="music-artist">Ed Sheeran</p>
+                        <div class="music-actions">
+                            <button class="details-button" onclick="showMusicDetails({
+                                title: 'Shape of You',
+                                artist: 'Ed Sheeran',
+                                year: '2017',
+                                album: '÷ (Divide)',
+                                genre: 'Pop',
+                                duration: '3:53'
+                            })">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Music Card 3 -->
+<div class="music-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 103, name: 'Blinding Lights', type: 'music'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="musicimg/3.jpg" alt="Blinding Lights" class="music-image">
+    <div class="music-info">
+        <h3 class="music-title">Blinding Lights</h3>
+        <p class="music-artist">The Weeknd</p>
+        <div class="music-actions">
+            <button class="details-button" onclick="showMusicDetails({
+                title: 'Blinding Lights',
+                artist: 'The Weeknd',
+                year: '2019',
+                album: 'After Hours',
+                genre: 'Synth-pop',
+                duration: '3:20'
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Music Card 4 -->
+<div class="music-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 104, name: 'Levitating', type: 'music'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="musicimg/4.jpg" alt="Levitating" class="music-image">
+    <div class="music-info">
+        <h3 class="music-title">Levitating</h3>
+        <p class="music-artist">Dua Lipa</p>
+        <div class="music-actions">
+            <button class="details-button" onclick="showMusicDetails({
+                title: 'Levitating',
+                artist: 'Dua Lipa',
+                year: '2020',
+                album: 'Future Nostalgia',
+                genre: 'Disco-pop',
+                duration: '3:23'
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Music Card 5 -->
+<div class="music-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 105, name: 'Bohemian Rhapsody', type: 'music'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="musicimg/1.jpg" alt="Bohemian Rhapsody" class="music-image">
+    <div class="music-info">
+        <h3 class="music-title">Bohemian Rhapsody</h3>
+        <p class="music-artist">Queen</p>
+        <div class="music-actions">
+            <button class="details-button" onclick="showMusicDetails({
+                title: 'Bohemian Rhapsody',
+                artist: 'Queen',
+                year: '1975',
+                album: 'A Night at the Opera',
+                genre: 'Rock',
+                duration: '5:55'
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Music Card 6 -->
+<div class="music-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 106, name: 'Bad Guy', type: 'music'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="musicimg/6.jpg" alt="Bad Guy" class="music-image">
+    <div class="music-info">
+        <h3 class="music-title">Bad Guy</h3>
+        <p class="music-artist">Billie Eilish</p>
+        <div class="music-actions">
+            <button class="details-button" onclick="showMusicDetails({
+                title: 'Bad Guy',
+                artist: 'Billie Eilish',
+                year: '2019',
+                album: 'When We All Fall Asleep, Where Do We Go?',
+                genre: 'Electropop',
+                duration: '3:14'
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Music Card 7 -->
+<div class="music-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 107, name: 'Peaches', type: 'music'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="musicimg/7.jpg" alt="Peaches" class="music-image">
+    <div class="music-info">
+        <h3 class="music-title">Peaches</h3>
+        <p class="music-artist">Justin Bieber</p>
+        <div class="music-actions">
+            <button class="details-button" onclick="showMusicDetails({
+                title: 'Peaches',
+                artist: 'Justin Bieber',
+                year: '2021',
+                album: 'Justice',
+                genre: 'R&B/Pop',
+                duration: '3:18'
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content" id="modalContent">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-meta" id="modalMeta"></div>
+            <p class="modal-description" id="modalDescription"></p>
+            <div class="platforms" id="modalPlatforms"></div>
+        </div>
+    </main>
+
+    <script>
+        function toggleFavorite(button, item) {
+            button.classList.toggle('favorited');
+
+            const icon = button.querySelector('i');
+            if (button.classList.contains('favorited')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            
+                addToFavorites(item);
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                
+                // rremove from favorites
+                removeFromFavorites(item.id);
+            }
+        
+            if (event) event.stopPropagation();
+        }
+    
+        function addToFavorites(item) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            if (!favorites.some(fav => fav.id === item.id)) {
+                favorites.push(item);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+        }
+        function removeFromFavorites(itemId) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            favorites = favorites.filter(item => item.id !== itemId);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+        
+        function showMusicDetails(data) {
+            // Dim the background
+            document.body.classList.add('dimmed');
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDescription').textContent = 
+                `Artist: ${data.artist}\nAlbum: ${data.album}\n\n${data.genre} • ${data.duration}`;
+        
+            const metaContainer = document.getElementById('modalMeta');
+            metaContainer.innerHTML = `
+                <span class="meta-item"><i class="fas fa-calendar-alt"></i> ${data.year}</span>
+                <span class="meta-item"><i class="fas fa-user"></i> ${data.artist}</span>
+                <span class="meta-item"><i class="fas fa-compact-disc"></i> ${data.album}</span>
+                <span class="meta-item"><i class="fas fa-music"></i> ${data.genre}</span>
+            `;
+          
+            const platformsContainer = document.getElementById('modalPlatforms');
+            platformsContainer.innerHTML = '<div style="width:100%; text-align:center; margin-bottom:10px;"><strong>Available on:</strong></div>';
+        
+            const musicPlatforms = ['Spotify', 'Apple Music', 'YouTube Music', 'Amazon Music'];
+            
+            musicPlatforms.forEach(platform => {
+                let iconClass = '';
+                if (platform === 'Spotify') iconClass = 'fab fa-spotify';
+                else if (platform === 'Apple Music') iconClass = 'fab fa-apple';
+                else if (platform === 'YouTube Music') iconClass = 'fab fa-youtube';
+                else if (platform === 'Amazon Music') iconClass = 'fab fa-amazon';
+                
+                platformsContainer.innerHTML += `
+                    <span class="platform">
+                        <i class="${iconClass} platform-icon"></i>
+                        ${platform}
+                    </span>
+                `;
+            });
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('modalContent').style.display = 'block';
+        }
+        function closeModal() {
+            document.body.classList.remove('dimmed');
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('modalContent').style.display = 'none';
+        }
+        document.getElementById('modalOverlay').addEventListener('click', closeModal);
+        document.addEventListener('DOMContentLoaded', function() {
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            document.querySelectorAll('.favorite-toggle').forEach(button => {
+                const itemMatch = button.getAttribute('onclick').match(/{.*?}/);
+                if (itemMatch) {
+                    const item = JSON.parse(itemMatch[0].replace(/'/g, '"'));
+                    if (favorites.some(fav => fav.id === item.id)) {
+                        button.classList.add('favorited');
+                        const icon = button.querySelector('i');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
