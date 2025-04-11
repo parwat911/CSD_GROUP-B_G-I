@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web-Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /*  GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #D3DDE6;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+        
+        body.dimmed {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        header {
+            background-color: #D3DDE6;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: black;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        
+        .favorite-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 22px;
+            color: #000;
+            transition: all 0.3s;
+        }
+        
+        .favorite-button:hover {
+            color: #ff3e3e;
+        }
+        
+        main {
+            margin-top: 80px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* WEBSERIES CONTAINER STYLES */
+        .webseries-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .webseries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .webseries-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .webseries-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .webseries-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+        
+        .webseries-info {
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .webseries-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .webseries-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .details-button {
+            padding: 8px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .details-button:hover {
+            background: #555;
+        }
+        
+        .favorite-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #ccc;
+            transition: all 0.3s;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .favorite-toggle.favorited {
+            color: #ff3e3e;
+        }
+        
+        /* ===== DETAILS MODAL STYLES ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            max-width: 90%;
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1001;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            background: none;
+            border: none;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .meta-item {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .modal-description {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        .platforms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .platform {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+        
+        .platform-icon {
+            font-size: 18px;
+        }
+        
+        /* ===== FOOTER STYLES ===== */
+        footer {
+            background: #111;
+            color: #fff;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #ccc;
+        }
+        
+        .copyright {
+            font-size: 14px;
+            color: #888;
+        }
+/* home button  */
+        .home-btn {
+            margin-left: 120px;
+    padding: 10px 20px;
+    background-color: #4CAF50; 
+    color: white; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  
+  .home-btn:hover {
+    background-color: #45a049; 
+  }
+    </style>
+</head>
+<body>
+    <!-- navigation bar -->
+    <header>
+        <div class="header-content">
+            <div class="nav-links">
+                <a href="documentry.html">Documentry</a>
+                <a href="music.html">Music</a>
+                <a href="top5.html">Top 5</a>
+            </div>
+            
+            <button class="favorite-button" onclick="window.location.href='favourite_list.html'">
+                <i class="fas fa-heart"></i> Favorites
+            </button>
+        </div>
+    </header>
+
+    <!-- Main container -->
+    <main>
+        <!-- Simple button that redirects when clicked to home page -->
+<a href="finall.html">
+    <button class="home-btn">Home</button>
+  </a>
+
+        <div class="webseries-container">
+            <h1>Web Series Collection</h1>
+            
+            <div class="webseries-grid">
+
+
+
+
+<!-- Web Series Card 1 -->
+<div class="webseries-card">
+                    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 1, name: 'Stranger Things'})">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="webseriesimg/st.jpg" alt="Stranger Things" class="webseries-image">
+                    <div class="webseries-info">
+                        <h3 class="webseries-title">Stranger Things</h3>
+                        <div class="webseries-actions">
+                            <button class="details-button" onclick="showDetails({
+                                title: 'Stranger Things',
+                                description: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and a strange little girl.',
+                                year: '2016',
+                                director: 'The Duffer Brothers',
+                                seasons: '4',
+                                episodes: '34',
+                                platforms: ['Netflix']
+                            })">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+</div>
+                
+<!-- Web Series Card 2 -->
+<div class="webseries-card">
+                    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 2, name: 'Dark'})">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="image/dark.jpg" alt="Dark" class="webseries-image">
+                    <div class="webseries-info">
+                        <h3 class="webseries-title">Dark</h3>
+                        <div class="webseries-actions">
+                            <button class="details-button" onclick="showDetails({
+                                title: 'Dark',
+                                description: 'A missing child sets four families on a frantic hunt for answers as they unearth a mind-bending mystery that spans three generations.',
+                                year: '2017',
+                                director: 'Baran bo Odar, Jantje Friese',
+                                seasons: '3',
+                                episodes: '26',
+                                platforms: ['Netflix']
+                            })">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+</div>
+                
+<!-- Web Series Card 3 -->
+<div class="webseries-card">
+                    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 3, name: 'The Crown'})">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <img src="webseriesimg/crown.jpg" alt="The Crown" class="webseries-image">
+                    <div class="webseries-info">
+                        <h3 class="webseries-title">The Crown</h3>
+                        <div class="webseries-actions">
+                            <button class="details-button" onclick="showDetails({
+                                title: 'The Crown',
+                                description: 'This drama follows the political rivalries and romance of Queen Elizabeth II\'s reign and the events that shaped the second half of the 20th century.',
+                                year: '2016',
+                                director: 'Peter Morgan',
+                                seasons: '5',
+                                episodes: '50',
+                                platforms: ['Netflix']
+                            })">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+</div>
+
+<!-- Web Series Card 4 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 4, name: 'Breaking Bad'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/bb.jpg" alt="Breaking Bad" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">Breaking Bad</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'Breaking Bad',
+                description: 'A high school chemistry teacher turned methamphetamine producer navigates the dangers of the drug world with his former student.',
+                year: '2008',
+                director: 'Vince Gilligan',
+                seasons: '5',
+                episodes: '62',
+                platforms: ['Netflix']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 5 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 5, name: 'Ozark'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/ozark.jpg" alt="Ozark" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">Ozark</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'Ozark',
+                description: 'A financial advisor drags his family from Chicago to the Missouri Ozarks, where he must launder money to appease a drug boss.',
+                year: '2017',
+                director: 'Bill Dubuque & Mark Williams',
+                seasons: '4',
+                episodes: '44',
+                platforms: ['Netflix']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 6 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 6, name: 'My Name'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/mn.jpg" alt="My Name" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">My Name</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'My Name',
+                description: 'Following her father\'s murder, a revenge-driven woman joins a crime ring and infiltrates the police force undercover.',
+                year: '2021',
+                director: 'Kim Jin-min',
+                seasons: '1',
+                episodes: '8',
+                platforms: ['Netflix']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 7 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 7, name: 'Prison Break'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/pb.jpg" alt="Prison Break" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">Prison Break</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'Prison Break',
+                description: 'A man gets himself sent to prison to help his brother escape from death row, plotting a complex plan from inside.',
+                year: '2005',
+                director: 'Paul Scheuring',
+                seasons: '5',
+                episodes: '90',
+                platforms: ['Disney+', 'Hulu']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Web Series Card 8 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 8, name: 'Loki'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/loki.jpg" alt="Loki" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">Loki</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'Loki',
+                description: 'Loki, the God of Mischief, steps out of his brother’s shadow to embark on an adventure that takes place after the events of Avengers: Endgame.',
+                year: '2021',
+                director: 'Kate Herron',
+                seasons: '2',
+                episodes: '12',
+                platforms: ['Disney+']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 9 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 9, name: 'The Gone Game'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/gg.jpg" alt="The Gone Game" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">The Gone Game</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'The Gone Game',
+                description: 'A mysterious death during the lockdown triggers a virtual investigation full of dark secrets and twists.',
+                year: '2020',
+                director: 'Nikhil Nagesh Bhat',
+                seasons: '2',
+                episodes: '12',
+                platforms: ['Voot']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 10 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 10, name: 'Game of Thrones'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/got.jpg" alt="Game of Thrones" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">Game of Thrones</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'Game of Thrones',
+                description: 'Nine noble families wage war against each other to gain control over the mythical land of Westeros.',
+                year: '2011',
+                director: 'David Benioff & D. B. Weiss',
+                seasons: '8',
+                episodes: '73',
+                platforms: ['HBO', 'Hotstar']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 11 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 11, name: 'The Silent Sea'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/ss.jpg" alt="The Silent Sea" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">The Silent Sea</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'The Silent Sea',
+                description: 'In a future Earth suffering from desertification, a team embarks on a mission to retrieve a mysterious sample from an abandoned lunar base.',
+                year: '2021',
+                director: 'Choi Hang-yong',
+                seasons: '1',
+                episodes: '8',
+                platforms: ['Netflix']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 12 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 12, name: 'Black Mirror'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/bm.jpg" alt="Black Mirror" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">Black Mirror</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'Black Mirror',
+                description: 'An anthology series exploring a twisted, high-tech multiverse where humanity\'s greatest innovations and darkest instincts collide.',
+                year: '2011',
+                director: 'Charlie Brooker',
+                seasons: '6',
+                episodes: '27',
+                platforms: ['Netflix']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 13 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 13, name: 'The End of the F***ing World'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/teotfw.jpg" alt="The End of the F***ing World" class="webseries-image">
+    <div class="webseries-info">
+        <h3 class="webseries-title">The End of the F***ing World</h3>
+        <div class="webseries-actions">
+            <button class="details-button" onclick="showDetails({
+                title: 'The End of the F***ing World',
+                description: 'A dark comedy about two misfit teenagers, James and Alyssa, who embark on a road trip to escape their lives.',
+                year: '2017',
+                director: 'Jonathan Entwistle',
+                seasons: '2',
+                episodes: '16',
+                platforms: ['Netflix']
+            })">
+                Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Web Series Card 14 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 14, name: 'The Queen\'s Gambit'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/qg.jpg" alt="The Queen's Gambit" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">The Queen's Gambit</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'The Queen\'s Gambit',
+          description: 'Orphaned chess prodigy Beth Harmon struggles with addiction in a quest to become the greatest chess player in the world.',
+          year: '2020',
+          director: 'Scott Frank',
+          seasons: '1',
+          episodes: '7',
+          platforms: ['Netflix']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 15 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 15, name: 'Squid Game'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/sg.jpg" alt="Squid Game" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Squid Game</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Squid Game',
+          description: 'Hundreds of cash-strapped players accept a strange invitation to compete in deadly children’s games for a tempting prize.',
+          year: '2021',
+          director: 'Hwang Dong-hyuk',
+          seasons: '1',
+          episodes: '9',
+          platforms: ['Netflix']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 16 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 16, name: 'Money Heist'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/mh.jpg" alt="Money Heist" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Money Heist</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Money Heist',
+          description: 'A criminal mastermind known as --The Professor plans the biggest heist in recorded history — to print billions of euros in the Royal Mint of Spain.',
+          year: '2017',
+          director: 'Álex Pina',
+          seasons: '5',
+          episodes: '41',
+          platforms: ['Netflix']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 17 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 17, name: 'Wednesday'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/wednesday.jpg" alt="Wednesday" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Wednesday</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Wednesday',
+          description: 'Follows Wednesday Addams years as a student, attempting to master her psychic ability and solve mysteries at Nevermore Academy.',
+          year: '2022',
+          director: 'Tim Burton',
+          seasons: '1',
+          episodes: '8',
+          platforms: ['Netflix']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 18 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 18, name: 'Peaky Blinders'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/peakyblinder.jpg" alt="Peaky Blinders" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Peaky Blinders</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Peaky Blinders',
+          description: 'A gangster family epic set in 1900s England, centered on Tommy Shelby, a ruthless boss of the Peaky Blinders gang.',
+          year: '2013',
+          director: 'Steven Knight',
+          seasons: '6',
+          episodes: '36',
+          platforms: ['Netflix', 'BBC']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 19 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 19, name: 'Kota Factory'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/kf.jpg" alt="Kota Factory" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Kota Factory</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Kota Factory',
+          description: 'Set in Kota, this series shows the life of students preparing for IIT-JEE in a brutally competitive environment.',
+          year: '2019',
+          director: 'Raghav Subbu',
+          seasons: '2',
+          episodes: '10',
+          platforms: ['Netflix', 'YouTube']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 20 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 20, name: 'The Family Man'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/fm.jpg" alt="The Family Man" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">The Family Man</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'The Family Man',
+          description: 'A middle-class man secretly works as an intelligence officer for T.A.S.C, balancing his job and family life.',
+          year: '2019',
+          director: 'Raj & DK',
+          seasons: '2',
+          episodes: '19',
+          platforms: ['Amazon Prime Video']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 21 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 21, name: 'Mirzapur'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/mirzapur.jpg" alt="Mirzapur" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Mirzapur</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Mirzapur',
+          description: 'A crime thriller set in the lawless city of Mirzapur ruled by a ruthless mafia don and his son.',
+          year: '2018',
+          director: 'Karan Anshuman',
+          seasons: '2',
+          episodes: '19',
+          platforms: ['Amazon Prime Video']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 22 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 22, name: '13 Reasons Why'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/13.jpg" alt="13 Reasons Why" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">13 Reasons Why</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: '13 Reasons Why',
+          description: 'High school student Clay Jensen lands in the center of a series of heart-wrenching mysteries set in motion by a friend’s tragic suicide.',
+          year: '2017',
+          director: 'Brian Yorkey',
+          seasons: '4',
+          episodes: '49',
+          platforms: ['Netflix']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+
+<!-- Web Series Card 23 -->
+<div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 23, name: 'Soundtrack #1'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/soundtrack.jpg" alt="Soundtrack #1" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Soundtrack #1</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Soundtrack #1',
+          description: 'Two longtime friends are forced to live together for two weeks, where they confront their feelings while writing a love-themed song.',
+          year: '2022',
+          director: 'Kim Hee-won',
+          seasons: '1',
+          episodes: '4',
+          platforms: ['Disney+']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 24 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 24, name: 'Parasite'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/parasite.jpg" alt="Parasite" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Parasite</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Parasite',
+          description: 'A poor family schemes to become employed by a wealthy family by infiltrating their household and posing as unrelated, highly qualified individuals.',
+          year: '2019',
+          director: 'Bong Joon-ho',
+          seasons: '1 (Movie)',
+          episodes: '1',
+          platforms: ['Amazon Prime Video']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Web Series Card 25 -->
+  <div class="webseries-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 25, name: 'Lost in Space'})">
+      <i class="far fa-heart"></i>
+    </button>
+    <img src="webseriesimg/lin.jpg" alt="Lost in Space" class="webseries-image">
+    <div class="webseries-info">
+      <h3 class="webseries-title">Lost in Space</h3>
+      <div class="webseries-actions">
+        <button class="details-button" onclick="showDetails({
+          title: 'Lost in Space',
+          description: 'After crash-landing on an alien planet, the Robinson family fights against all odds to survive and escape.',
+          year: '2018',
+          director: 'Zack Estrin',
+          seasons: '3',
+          episodes: '28',
+          platforms: ['Netflix']
+        })">Details</button>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+            </div>
+        </div>
+        
+
+
+
+
+        <!-- Details Modal -->
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content" id="modalContent">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-meta" id="modalMeta"></div>
+            <p class="modal-description" id="modalDescription"></p>
+            <div class="platforms" id="modalPlatforms"></div>
+        </div>
+    </main>
+    
+    <!-- ffooter -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about">About Us</a>
+                <a href="/contact">Contact Us</a>
+            </div>
+            <div class="copyright">
+                &copy; 2024 Web Series Streaming. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Favorite button functionality
+        function toggleFavorite(button, series) {
+            // Toggle the visual state
+            button.classList.toggle('favorited');
+            
+            // Change the icon
+            const icon = button.querySelector('i');
+            if (button.classList.contains('favorited')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                
+                // Add series to favorites
+                addToFavorites(series);
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                
+                // Remove websereise from favorites
+                removeFromFavorites(series.id);
+            }
+            
+            // Prevent event bubbling to avoid triggering card click
+            if (event) event.stopPropagation();
+        }
+        
+        // Function to add series to favorites
+        function addToFavorites(series) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            // Check weather it already exists or not3
+            if (!favorites.some(fav => fav.id === series.id)) {
+                favorites.push(series);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+        }
+        
+        //to remove series from favorites
+        function removeFromFavorites(seriesId) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            favorites = favorites.filter(item => item.id !== seriesId);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+        
+        // DISPLAY  details modal
+        function showDetails(data) {
+            // Dim the background
+            document.body.classList.add('dimmed');
+            
+            // Set modal content
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDescription').textContent = data.description;
+            
+            // Setinformation
+            const metaContainer = document.getElementById('modalMeta');
+            metaContainer.innerHTML = `
+                <span class="meta-item"><i class="fas fa-calendar-alt"></i> ${data.year}</span>
+                <span class="meta-item"><i class="fas fa-user"></i> ${data.director}</span>
+                <span class="meta-item"><i class="fas fa-tv"></i> ${data.seasons} Seasons</span>
+                <span class="meta-item"><i class="fas fa-list-ol"></i> ${data.episodes} Episodes</span>
+            `;
+            
+            // Set platforms LIKES YT , NEFLIX
+            const platformsContainer = document.getElementById('modalPlatforms');
+            platformsContainer.innerHTML = '<div style="width:100%; text-align:center; margin-bottom:10px;"><strong>Available on:</strong></div>';
+            data.platforms.forEach(platform => {
+                let iconClass = '';
+                if (platform === 'Netflix') iconClass = 'fab fa-netflix';
+                else if (platform === 'Disney+') iconClass = 'fab fa-disney';
+                else if (platform === 'Amazon Prime') iconClass = 'fab fa-amazon';
+                else if (platform === 'HBO Max') iconClass = 'fab fa-hbo';
+                else if (platform === 'YouTube') iconClass = 'fab fa-youtube';
+                
+                platformsContainer.innerHTML += `
+                    <span class="platform">
+                        <i class="${iconClass} platform-icon"></i>
+                        ${platform}
+                    </span>
+                `;
+            });
+            
+            // how modal
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('modalContent').style.display = 'block';
+        }
+        
+        // close modal
+        function closeModal() {
+            document.body.classList.remove('dimmed');
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('modalContent').style.display = 'none';
+        }
+        
+        // close modal when clicking outside
+        document.getElementById('modalOverlay').addEventListener('click', closeModal);
+        
+        // Check and set initial favorite states when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            document.querySelectorAll('.favorite-toggle').forEach(button => {
+                const seriesTitle = button.getAttribute('onclick').match(/{.*?}/)[0];
+                const series = JSON.parse(seriesTitle.replace(/'/g, '"'));
+                if (favorites.some(fav => fav.id === series.id)) {
+                    button.classList.add('favorited');
+                    const icon = button.querySelector('i');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
