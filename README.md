@@ -12,3 +12,15 @@ To my fellow team members this is a importent notice to put our files name as gi
   1.documentry.html
   2.top5.html
   3.review.html
+
+
+
+    **Folder Name for Images**
+for all the images 
+  image
+for music page:
+  musicimg
+for webseries page:
+  webseriesimg
+for documentry page:
+  documentryimg
