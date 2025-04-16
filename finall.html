@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT4vAbpV1s+XW8yW9e/sS0QK" crossorigin="anonymous">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web-Hub</title>
+    <!--icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
+    <!-- jquery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Splash Screen Styles */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image/2149241821.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        #logo, #quote {
+            display: none;
+        }
+
+        #logo {
+            height: 200px;
+            width: 200px;
+        }
+
+        #quote {
+    height: 300px;
+    width: 350px;
+    position: absolute;
+    bottom: 20px;  
+    right: 20px;   
+}
+
+        /* Hide main content at first  so that splash screen can sppear perfectly*/
+        #main-content {
+            display: none;
+        }
+
+        /* global style */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #D3DDE6;
+            color: #faf8fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        main {
+            flex: 1;
+            margin-top: 80px;
+        }
+        
+        /* navigation bar*/
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color:#D3DDE6 ;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+          
+        }
+
+        /* website logo sytle */
+    
+        .header-logo {
+    height: 50px;
+    margin-right: 200px;
+    position: absolute;
+    left: 20px; 
+    top: 0px; 
+}
+
+        /* link  */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            margin: 0 15px;
+            position: relative;
+            font-size: 18px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: black;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease-in-out;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* for search bar shape and size nd input  */
+        .search-container {
+            position: relative;
+            width: 300px;
+            left:30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 2px solid #000;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .search-input:focus {
+            border-color: #000000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #000000;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .search-icon:hover {
+            color: #000000;
+        }
+
+        /* search result drop down pop up */
+        #search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 5px;
+            background: #000000;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .movie-result {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .movie-result:hover {
+            background-color: #D3DDE6;
+        }
+
+        .no-results {
+            padding: 10px 15px;
+            color: #666;
+        }
+
+        /* favourtie button sytle and changeing color */
+        .favorite-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 22px;
+            color: #000000;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-button:hover {
+            color: #ff3e3e;
+        }
+
+        /*fistr container sytle */
+        .first-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 70px);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .first-slideshow {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .first-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+/* image link hear instead of body */
+        .first-slide:nth-child(1) { background-image: url('image/strangersthing.jpg'); }
+        .first-slide:nth-child(2) { background-image: url('image/dark.jpg'); }
+        .first-slide:nth-child(3) { background-image: url('image/13reasonwhy.jpg'); }
+        .first-slide:nth-child(4) { background-image: url('image/allofusaredead.jpg'); }
+
+        .first-overlayout {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .first-content {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            max-width: 500px;
+            z-index: 2;
+        }
+        .first-content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+        }
+        .first-content p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: white;
+        }
+        .first-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .first-btn-view {
+            font-size: 1rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            color: black;
+            font-weight: bold;
+        }
+        .first-btn-view:hover {
+            background: lightgray;
+        }
+        .first-btn-list {
+            font-size: 1rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+        }
+        .first-btn-list:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* navigation button small one for slicding things rond one with < and > */
+        .first-slider-nav {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .slider-nav-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            color: black;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-nav-button:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.1);
+        }
+
+        /* dot indicator */
+        .first-dots-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .first-dot {
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .first-dot.active {
+            background-color: white;
+            transform: scale(1.2);
+        }
+
+        /*3 small container*/
+        .container-3small {
+            width: 100%;
+            padding: 60px 0;
+        }
+
+        .small-categories {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            gap: 30px;
+        }
+
+        .small-box {
+            position: relative;
+            flex: 1;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            background-color: #D3DDE6;
+        }
+
+        .small-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .small-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .small-label {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+        }
+
+        /*secont slicer container sylles */
+        .second-slider-container {
+            position: relative;
+            width: 90%;
+            margin: 60px auto;
+            overflow: hidden;
+            height: 500px;
+            border-radius: 0px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            background-color: #D3DDE6;
+        }
+        
+        .second-slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        
+        .second-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .second-slide video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        
+        .image-name {
+            position: absolute;
+            top: 85%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            border: none;
+            background: rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+            z-index: 2;
+            border-radius: 25px;
+            padding: 10px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        
+        .image-name:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+        }
+        
+        .image-description {
+            position: absolute;
+            bottom: 30%;
+            left: 30px;
+            color: white;
+            font-size: 20px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: none;
+            padding: 15px;
+            border-radius: 10px;
+            width: 40%;
+            line-height: 1.4;
+            z-index: 2;
+            transform: translateY(20px);
+            backdrop-filter: blur(2px);
+        }
+        
+        .image-name:hover ~ .image-description {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* navigation button for navigations */
+        .second-slider-nav {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+        
+        .second-slider-nav button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .second-slider-nav button:hover {
+            background: black;
+            color: white;
+        }
+        
+        /*footer which is down in the footer part of the page */
+        footer {
+            background: #111;
+            color: #fff;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #ccc;
+        }
+        
+        .copyright {
+            font-size: 14px;
+            color: #888;
+        }
+
+/* cookies */
+.cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 80%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+.cookie-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.cookie-banner button {
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.accept-btn {
+    background: #ff7300;
+    color: white;
+}
+
+.decline-btn {
+    background: #444;
+    color: white;
+}
+
+.cookie-text {
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+
+
+    </style>
+</head>
+<body>
+     <!-- cookies for best user experience -->
+     <div id="cookie-banner" class="cookie-banner" style="display: none;">
+        <p class="cookie-text">This website uses cookies to ensure you get the best experience.</p>
+        <div class="cookie-buttons">
+            <button class="decline-btn" onclick="declineCookies()">Decline</button>
+            <button class="accept-btn" onclick="acceptCookies()">Accept</button>
+        </div>
+    </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img id="logo" src="image/logo.png" alt="Logo">
+        <img id="quote" src="image/quote.png" alt="Quote">
+    </div>
+
+   
+    <div id="main-content">
+       
+        <header>
+            <div class="top"></div>
+            <div class="header-content">
+                <!-- add logo here -->
+                <a href="#top"><img src="image/logo.png" alt="Website Logo" class="header-logo"></a>
+                
+                <div class="search-container">
+                    <input type="text" class="search-input" id="movie-search" placeholder="Search for movies...">
+                    <i class="fas fa-search search-icon"></i>
+                    <div id="search-results"></div>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="webseries.html">Web-series</a>
+                    <a href="documentry.html">Documentry</a>
+                    <a href="music.html">music</a>
+                    <a href="top5.html">Top 5</a>
+                
+                    <a href="review.html">Review</a>
+                </div>
+                
+                <button class="favorite-button" onclick="window.location.href='favourite_list.html'">Favourite
+                    <i class="fas fa-heart"></i>
+                </button>
+            </div>
+        </header>
+
+        
+        <main>
+           
+
+            <!-- forst container-->
+            <div class="first-container">
+                <div class="first-slideshow">
+                    <div class="first-slide">
+                        <div class="first-overlayout"></div>
+                        <div class="first-content">
+                            <h1>STRANGER THINGS</h1>
+                            <p>When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and a strange little girl.</p>
+                            <div class="first-buttons">
+                                <a href="webseries.html"><button class="first-btn-view"><i class="fa fa-eye"></i> View</button></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-slide">
+                        <div class="first-overlayout"></div>
+                        <div class="first-content">
+                            <h1>DARK</h1>
+                            <p>When reality cracks, a quiet town spirals into chaos—hidden experiments, eerie forces, and a girl with dangerous powers. What they uncover was never meant to be found.</p>
+                            <div class="first-buttons">
+                               <a href="webseries.html"> <button class="first-btn-view"><i class="fa fa-eye"></i> View</button></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-slide">
+                        <div class="first-overlayout"></div>
+                        <div class="first-content">
+                            <h1>13 Reasons Why:</h1>
+                            <p>After a teen girl takes her own life, a classmate receives a box of tapes revealing the heartbreaking secrets—and the people—she blames. Each tape uncovers a new truth, and no one is innocent.</p>
+                            <div class="first-buttons">
+                               <a href="webseries.html"> <button class="first-btn-view"><i class="fa fa-eye"></i> View</button></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="first-slide">
+                        <div class="first-overlayout"></div>
+                        <div class="first-content">
+                            <h1>ALL OF US ARE DEAD</h1>
+                            <p>A zombie virus breaks out in a high school, trapping students in a deadly fight for survival. Friendships are tested, chaos erupts, and every hallway could be your last.</p>
+                            <div class="first-buttons">
+                                <a href="webseries.html"><button class="first-btn-view"><i class="fa fa-eye"></i> View</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- small navigation button < > -->
+                <div class="first-slider-nav">
+                    <button class="slider-nav-button" id="firstPrevBtn">❮</button>
+                    <button class="slider-nav-button" id="firstNextBtn">❯</button>
+                </div>
+
+                <!--dots container-->
+                <div class="first-dots-container" id="firstDotsContainer"></div>
+            </div>
+
+            <!-- 3 Small containers -->
+            <div class="container-3small">
+                <div class="small-categories">
+                    <!-- documenty Category -->
+                    <div class="small-box" onclick="window.location.href='documentry.html';">
+                        <img src="image/documentry.jpg" alt="documentry" class="small-image">
+                        <div class="small-label">DOCUMENTRY</div>
+                    </div>
+                    
+                    <!-- movie Category -->
+                    <div class="small-box" onclick="window.location.href='music.html';">
+                        <img src="image/music.jpg" alt="music" class="small-image">
+                        <div class="small-label">Music <br>Album</div>
+                    </div>
+                    
+                    <!-- web-series Category -->
+                    <div class="small-box" onclick="window.location.href='webseries.html';">
+                        <img src="image/webseries.jpg" alt="web-series" class="small-image">
+                        <div class="small-label">Web-series</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- second container -->
+            <div class="second-slider-container">
+                <div class="second-slider">
+                    <div class="second-slide">
+                        <video autoplay muted loop playsinline>
+                            <source src="video/breakingbad.mov" type="video/mp4">
+                            Your browser does not support HTML5 video.
+                        </video>
+                        <button class="image-name">Breaking Bad</button>
+                        <div class="image-description">A high school chemistry teacher turned meth kingpin descends into the criminal underworld, transforming into one of television's most iconic anti-heroes in a gripping tale of morality, power, and survival.</div>
+                    </div>
+                    <div class="second-slide">
+                        <video autoplay muted loop playsinline>
+                            <source src="video/ozark.mov" type="video/mp4">
+                            Your browser does not support HTML5 video.
+                        </video>
+                        <button class="image-name">Ozark</button>
+                        <div class="image-description">A high school chemistry teacher turned meth kingpin descends into the criminal underworld, risking everything to secure his family's future—no matter the cost.</div>
+                    </div>
+                    <div class="second-slide">
+                        <video autoplay muted loop playsinline>
+                            <source src="video/eotfw.mov" type="video/mp4">
+                            Your browser does not support HTML5 video.
+                        </video>
+                        <button class="image-name">End Of The F*ing World</button>
+                        <div class="image-description">A darkly comedic and twisted coming-of-age story about a self-proclaimed psychopath and a rebellious teen who embark on a wild, dangerous road trip that changes everything.</div>
+                    </div>
+                </div>
+                <div class="second-slider-nav">
+                    <button id="secondPrevBtn">❮</button>
+                    <button id="secondNextBtn">❯</button>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="aboutus.html">About Us</a>
+                    <a href="contactus.html">Contact Us</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2023 Your Company Name. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // splash screen animation
+        $(document).ready(function() {
+            // fade in logo and quote
+            setTimeout(function() {
+                $('#logo').fadeIn(500);
+                $('#quote').fadeIn(500);
+            }, 500);
+
+            // fade out splash screen and display main thing
+            setTimeout(function() {
+                $('#splash-screen').fadeOut(500, function() {
+                    $('#main-content').fadeIn(0);
+                });
+            }, 1500); //1500 is mili second which is 1.5 second
+        });
+
+       
+       //search for movies and it will redirect to the webseries page
+        const movies = [
+            { name: "Dark", link: "webseries.html" },
+            { name: "Stranger Thing", link: "webseries.html" },
+            { name: "13 Reason why", link: "webseries.html" },
+            { name: "Breaking Bad", link: "webseries.html" },
+            { name: "All Of Us Are dead", link: "webseries.html"},
+            {name:"Elite",link:"webseries.html"},
+            {name:"Sex Education",link:"webseries.html"},
+            {name:"Sweet Tooth",link:"webseries.html"},
+            {name:"My Name",link:"webseries.html"},
+            {name:"Lost in space",link:"webseries.html"},
+            {name:"Train To busan",link:"webseries.html"},
+            {name:"Parasite",link:"webseries.html"},
+            {name:"Mirzapur",link:"webseries.html"},
+            {name:"Alish in Borderland",link:"webseries.html"},
+            {name:"Ozark",link:"webseries.html"},
+            {name:"Prison Break",link:"webseries.html"},
+            {name:"Game Of Thrones",link:"webseries.html"},
+            {name:"End Of The Fuc***g World",link:"webseries.html"},
+            {name:"Squid Game",link:"webseries.html"},
+            {name:"Monkey Heist",link:"webseries.html"},
+            {name:"",link:"webseries.html"}
+        ];
+
+        const searchInput = document.getElementById('movie-search');
+        const searchResults = document.getElementById('search-results');
+        const searchContainer = document.querySelector('.search-container');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            searchResults.innerHTML = '';
+            
+            if (searchTerm === '') {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            const filteredMovies = movies.filter(movie => 
+                movie.name.toLowerCase().includes(searchTerm)
+            );
+            
+            if (filteredMovies.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">No movies found</div>';
+                searchResults.style.display = 'block';
+                return;
+            }
+            
+            filteredMovies.forEach(movie => {
+                const movieElement = document.createElement('div');
+                movieElement.className = 'movie-result';
+                movieElement.textContent = movie.name;
+                movieElement.addEventListener('click', () => {
+                    window.location.href = movie.link;
+                    searchResults.style.display = 'none';
+                });
+                searchResults.appendChild(movieElement);
+            });
+            
+            searchResults.style.display = 'block';
+        });
+
+        // to close the search bar when click outside any where
+        document.addEventListener('click', function(e) {
+            if (!searchContainer.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // first slicder or container
+        document.addEventListener("DOMContentLoaded", function() {
+            const slideshow = document.querySelector('.first-slideshow');
+            const slides = document.querySelectorAll('.first-slide');
+            const prevBtn = document.getElementById('firstPrevBtn');
+            const nextBtn = document.getElementById('firstNextBtn');
+            const dotsContainer = document.getElementById('firstDotsContainer');
+            
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+
+            // create dots
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('first-dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            });
+
+            const dots = document.querySelectorAll('.first-dot');
+
+            function updateSlideshow() {
+                slideshow.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // update active dot
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentIndex);
+                });
+
+                // updare content visibility if needed
+                document.querySelectorAll('.first-content').forEach((content, index) => {
+                    content.style.opacity = index === currentIndex ? '1' : '0';
+                });
+            }
+
+            function goToSlide(index) {
+                currentIndex = index;
+                updateSlideshow();
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateSlideshow();
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                updateSlideshow();
+            }
+
+            // wheh click in button redirect forward or near
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+
+            // Auto-slide every 5000 mili secont mean 5 seconds
+            let slideInterval = setInterval(nextSlide, 5000);
+
+           
+            slideshow.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+
+            slideshow.addEventListener('mouseleave', () => {
+                slideInterval = setInterval(nextSlide, 5000);
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                if (e.key === 'ArrowRight') nextSlide();
+            });
+        });
+
+        // second slicer 
+        function initSecondSlider() {
+            const slider = document.querySelector('.second-slider');
+            const slides = document.querySelectorAll('.second-slide');
+            const videos = document.querySelectorAll('.second-slide video');
+            const prevBtn = document.getElementById('secondPrevBtn');
+            const nextBtn = document.getElementById('secondNextBtn');
+            
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+            let autoSlideInterval;
+
+            function updateSlider() {
+                slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+                // Pause all videos except the  current one
+                videos.forEach((video, index) => {
+                    if (index === currentIndex) {
+                        video.play().catch(e => console.log("Auto-play prevented:", e));
+                    } else {
+                        video.pause();
+                    }
+                });
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateSlider();
+                resetAutoSlide();
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                updateSlider();
+                resetAutoSlide();
+            }
+
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+            }
+
+            function resetAutoSlide() {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            }
+
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            //manage video playback on slide change
+            slider.addEventListener('transitionend', updateSlider);
+
+            // Pause videos 
+            slider.addEventListener('mouseenter', () => {
+                clearInterval(autoSlideInterval);
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                startAutoSlide();
+            });
+
+            let touchStartX = 0;
+            slider.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                clearInterval(autoSlideInterval);
+            });
+            
+            slider.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].screenX;
+                if (touchEndX < touchStartX - 50) nextSlide();
+                if (touchEndX > touchStartX + 50) prevSlide();
+                startAutoSlide();
+            });
+
+            updateSlider(); 
+            startAutoSlide(); 
+        
+            videos[0].play().catch(e => {
+                console.log("Auto-play prevented, adding play button fallback");
+            });
+        }
+
+       
+        document.addEventListener("DOMContentLoaded", function() {
+            initSecondSlider();
+        });
+
+
+        //cookies
+        function acceptCookies() {
+    document.getElementById("cookie-banner").style.display = "none";
+    document.cookie = "cookiesAccepted=true; path=/; max-age=" + 60 * 60 * 24 * 30;
+}
+
+function declineCookies() {
+    document.getElementById("cookie-banner").style.display = "none";
+    document.cookie = "cookiesAccepted=false; path=/; max-age=" + 60 * 60 * 24 * 30;
+}
+
+function checkCookies() {
+    if (!document.cookie.includes("cookiesAccepted=")) {
+        document.getElementById("cookie-banner").style.display = "flex";
+    }
+}
+//show cookies after splash screen time out and really cookies is needde or not it analysise
+setTimeout(function() {
+    $('#splash-screen').fadeOut(500, function() {
+        $('#main-content').fadeIn(0);
+        checkCookies(); 
+    });
+}, 1500);
+    </script>
+
+
+
+<!-- Bootstrap  -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kF1Sk3dbzGmg1L7gI4Dr0sPpUAw9A0L5gYb9RnGP1Nzd2bTZi3d38ub1l5q7FZnN" crossorigin="anonymous"></script>
+
+</body>
+</html>

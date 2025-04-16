@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentary Collection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reuse your existing styles from music.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #D3DDE6;
+            color: #333;
+        }
+        
+        header {
+            background-color: #D3DDE6;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: black;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease-in-out;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        
+        .favorite-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 22px;
+            color: #000;
+        }
+        
+        main {
+            margin-top: 80px;
+            padding: 20px;
+        }
+        
+        .documentary-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .documentary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .documentary-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .documentary-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .documentary-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .documentary-info {
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .documentary-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .documentary-director {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .documentary-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .details-button {
+            padding: 8px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .favorite-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #ccc;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        
+        .favorite-toggle.favorited {
+            color: #ff3e3e;
+        }
+        
+        .home-btn {
+            margin-left: 120px;
+            padding: 10px 20px;
+            background-color: #4CAF50; 
+            color: white; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="nav-links">
+                <a href="music.html">Music</a>
+                <a href="webseries.html">Webseries</a>
+                <a href="top5.html">Top 5</a>
+            </div>
+            <button class="favorite-button" onclick="window.location.href='favourite_list.html'">
+                <i class="fas fa-heart"></i> Favorites
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <a href="finall.html">
+            <button class="home-btn">Home</button>
+        </a>
+
+        <div class="documentary-container">
+            <h1>Documentary Collection</h1>
+            
+            <div class="documentary-grid">
+                
+               <!-- Documentary Card 1 -->
+<div class="documentary-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 201, name: 'Planet Earth II', type: 'documentary'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="images/c.jpg.jpg"Planet Earth II" class="documentary-image">
+    <div class="documentary-info">
+        <h3 class="documentary-title">Planet Earth II</h3>
+        <p class="documentary-director">BBC Studios</p>
+        <div class="documentary-actions">
+            <button class="details-button" onclick="showDocumentaryDetails({
+                title: 'Planet Earth II',
+                director: 'BBC Studios',
+                year: '2016',
+                duration: '6 episodes',
+                description: 'A breathtaking exploration of wildlife across the globe.'
+            })">Details</button>
+        </div>
+    </div>
+</div>
+
+<!-- Documentary Card 2 -->
+<div class="documentary-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 202, name: 'Our Planet', type: 'documentary'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="images/d.jpg" alt="Our Planet" class="documentary-image">
+    <div class="documentary-info">
+        <h3 class="documentary-title">Our Planet</h3>
+        <p class="documentary-director">Netflix</p>
+        <div class="documentary-actions">
+            <button class="details-button" onclick="showDocumentaryDetails({
+                title: 'Our Planet',
+                director: 'Netflix',
+                year: '2019',
+                duration: '8 episodes',
+                description: 'A visually stunning journey showcasing Earth’s natural wonders.'
+            })">Details</button>
+        </div>
+    </div>
+</div>
+
+<!-- Documentary Card 3 -->
+<div class="documentary-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 203, name: 'The Blue Planet', type: 'documentary'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="images/g.jpg" alt="The Blue Planet" class="documentary-image">
+    <div class="documentary-info">
+        <h3 class="documentary-title">The Blue Planet</h3>
+        <p class="documentary-director">BBC</p>
+        <div class="documentary-actions">
+            <button class="details-button" onclick="showDocumentaryDetails({
+                title: 'The Blue Planet',
+                director: 'BBC',
+                year: '2001',
+                duration: '8 episodes',
+                description: 'An in-depth exploration of the ocean and its mysteries.'
+            })">Details</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Documentary Card 4 -->
+<div class="documentary-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 205, name: 'Cosmos: A Spacetime Odyssey', type: 'documentary'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="images/h.jpg" alt="Cosmos" class="documentary-image">
+    <div class="documentary-info">
+        <h3 class="documentary-title">Cosmos: A Spacetime Odyssey</h3>
+        <p class="documentary-director">National Geographic</p>
+        <div class="documentary-actions">
+            <button class="details-button" onclick="showDocumentaryDetails({
+                title: 'Cosmos: A Spacetime Odyssey',
+                director: 'National Geographic',
+                year: '2014',
+                duration: '13 episodes',
+                description: 'Neil deGrasse Tyson guides viewers through the universe.'
+            })">Details</button>
+        </div>
+    </div>
+</div>
+
+<!-- Documentary Card 5 -->
+<div class="documentary-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 207, name: 'Making a Murderer', type: 'documentary'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="images/f.jpg" alt="Making a Murderer" class="documentary-image">
+    <div class="documentary-info">
+        <h3 class="documentary-title">Making a Murderer</h3>
+        <p class="documentary-director">Netflix</p>
+        <div class="documentary-actions">
+            <button class="details-button" onclick="showDocumentaryDetails({
+                title: 'Making a Murderer',
+                director: 'Netflix',
+                year: '2015',
+                duration: '10 episodes',
+                description: 'A deep dive into the controversial case of Steven Avery.'
+            })">Details</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Documentary Card 6-->
+<div class="documentary-card">
+    <button class="favorite-toggle" onclick="toggleFavorite(this, {id: 210, name: 'Life on Our Planet', type: 'documentary'})">
+        <i class="far fa-heart"></i>
+    </button>
+    <img src="images/b.gpg.jpg" alt="The Social Dilemma" class="documentary-image">
+    <div class="documentary-info">
+        <h3 class="documentary-title">Life on Our Planet</h3>
+        <p class="documentary-director">Netflix</p>
+        <div class="documentary-actions">
+            <button class="details-button" onclick="showDocumentaryDetails({
+                title: 'Life on Our Planet',
+                director: 'Netflix',
+                year: '2023',
+                duration: '8 episodes',
+                description: 'Explores the evolution and extinction of Earth’s past species.'
+            })">Details</button>
+        </div>
+    </div>
+</div>
+
+                
+        </div>
+    </main>
+
+    <script>
+        // Favorite functionality - same as music.html
+        function toggleFavorite(button, item) {
+            // Toggle the visual state
+            button.classList.toggle('favorited');
+            
+            // Change the icon
+            const icon = button.querySelector('i');
+            if (button.classList.contains('favorited')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                
+                // Add to favorites
+                addToFavorites(item);
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                
+                // Remove from favorites
+                removeFromFavorites(item.id);
+            }
+            
+            // Prevent event bubbling to avoid triggering card click
+            if (event) event.stopPropagation();
+        }
+        
+        function addToFavorites(item) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            // Check if already exists
+            if (!favorites.some(fav => fav.id === item.id)) {
+                favorites.push(item);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+        }
+        
+        function removeFromFavorites(itemId) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            favorites = favorites.filter(item => item.id !== itemId);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+        
+        function showDocumentaryDetails(data) {
+            // Create modal elements
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = '#fff';
+            modalContent.style.padding = '20px';
+            modalContent.style.borderRadius = '8px';
+            modalContent.style.maxWidth = '600px';
+            modalContent.style.width = '90%';
+            
+            modalContent.innerHTML = `
+                <h2>${data.title}</h2>
+                <p><strong>Director:</strong> ${data.director}</p>
+                <p><strong>Year:</strong> ${data.year}</p>
+                <p><strong>Duration:</strong> ${data.duration}</p>
+                <p><strong>Description:</strong> ${data.description}</p>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="margin-top: 20px; padding: 8px 15px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Close
+                </button>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+        
+        // Initialize favorite buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            document.querySelectorAll('.favorite-toggle').forEach(button => {
+                const itemMatch = button.getAttribute('onclick').match(/{.*?}/);
+                if (itemMatch) {
+                    const item = JSON.parse(itemMatch[0].replace(/'/g, '"'));
+                    if (favorites.some(fav => fav.id === item.id)) {
+                        button.classList.add('favorited');
+                        const icon = button.querySelector('i');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>jQuery Review Page</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .star {
+      font-size: 32px;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .star.selected {
+      color: gold;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background: #000;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #d3dde6;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .success {
+      text-align: center;
+      margin-top: 10px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Leave a Review</h2>
+
+    <div class="stars" id="starRating">
+      <span class="star" data-value="1">&#9733;</span>
+      <span class="star" data-value="2">&#9733;</span>
+      <span class="star" data-value="3">&#9733;</span>
+      <span class="star" data-value="4">&#9733;</span>
+      <span class="star" data-value="5">&#9733;</span>
+    </div>
+
+    <textarea id="reviewText" placeholder="Write your review here..."></textarea>
+    <button id="submitReview">Submit Review</button>
+    <div class="success" id="msg"></div>
+
+    <h3>All Reviews</h3>
+    <table id="reviewTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Rating</th>
+          <th>Review</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Reviews will appear here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let selectedRating = 0;
+
+    $(document).ready(function () {
+      // Star selection
+      $('.star').on('click', function () {
+        selectedRating = parseInt($(this).data('value'));
+        $('.star').removeClass('selected');
+        $('.star').each(function () {
+          if (parseInt($(this).data('value')) <= selectedRating) {
+            $(this).addClass('selected');
+          }
+        });
+      });
+
+      // Submit review
+      $('#submitReview').on('click', function () {
+        const reviewText = $('#reviewText').val().trim();
+
+        if (selectedRating === 0 || reviewText === '') {
+          $('#msg').text("Please provide both a star rating and a review.").css('color', 'red');
+          return;
+        }
+
+        const review = {
+          rating: selectedRating,
+          text: reviewText
+        };
+
+        let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+        reviews.push(review);
+        localStorage.setItem("reviews", JSON.stringify(reviews));
+
+        $('#reviewText').val('');
+        selectedRating = 0;
+        $('.star').removeClass('selected');
+        $('#msg').text("Review submitted!").css('color', 'green');
+
+        loadReviews();
+      });
+
+      // Load existing reviews
+      function loadReviews() {
+        let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+        const $tbody = $('#reviewTable tbody');
+        $tbody.empty();
+
+        reviews.forEach((review, index) => {
+          let stars = '';
+          for (let i = 1; i <= 5; i++) {
+            stars += i <= review.rating ? '&#9733;' : '&#9734;';
+          }
+
+          const row = `<tr>
+                        <td>${index + 1}</td>
+                        <td style="color:gold; font-size:18px;">${stars}</td>
+                        <td>${review.text}</td>
+                      </tr>`;
+          $tbody.append(row);
+        });
+      }
+
+      loadReviews(); // Initial load
+    });
+  </script>
+</body>
+</html>
